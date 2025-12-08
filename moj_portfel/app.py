@@ -41,10 +41,15 @@ def inject_css():
 
         html, body {
             background: var(--bg-main);
-            color: var(--text-main);
         }
 
-        /* Główna kolumna – centrowanie i max szerokość (węższa, żeby hero był wyraźniejszy) */
+        /* Globalne wymuszenie jasnego tekstu */
+        body, body * {
+            color: var(--text-main) !important;
+            box-shadow: none;
+        }
+
+        /* Główna kolumna – centrowanie i max szerokość */
         [data-testid="stAppViewContainer"] > .main .block-container {
             max-width: 1000px;
             padding-top: 1.5rem;
@@ -52,40 +57,51 @@ def inject_css():
             margin: 0 auto;
         }
 
-        /* Tło aplikacji */
         [data-testid="stAppViewContainer"] {
             background: var(--bg-main);
-            color: var(--text-main);
         }
 
-        /* Sidebar – jasny, stonowany */
+        /* Sidebar – jasny, bez czerni */
         [data-testid="stSidebar"] {
             background: #ffffff;
             border-right: 1px solid var(--border-soft);
         }
 
         [data-testid="stSidebar"] * {
-            color: var(--text-main);
+            color: var(--text-main) !important;
         }
 
-        /* Jasne pola input/textarea nawet przy dark theme na koncie */
-        [data-testid="stTextInput"] input,
-        [data-testid="stTextArea"] textarea,
-        [data-testid="stNumberInput"] input {
+        /* Pola input / textarea / select – jasne tło, ciemny tekst */
+        input, textarea, select {
             background: #f9fafb !important;
             color: var(--text-main) !important;
             border: 1px solid var(--border-soft) !important;
         }
 
-        /* Nagłówek aplikacji */
-        .main > div:first-child h1 {
-            font-weight: 700;
-            letter-spacing: 0.02em;
+        /* Przyciski (w tym "Odśwież") */
+        button, [data-testid="stSidebar"] button {
+            background: var(--primary-color) !important;
+            color: #ffffff !important;
+            border-radius: 999px !important;
+            border: none !important;
+        }
+        button:hover, [data-testid="stSidebar"] button:hover {
+            filter: brightness(0.95);
         }
 
-        /* Podtytuł */
-        .main > div:first-child p {
-            color: var(--text-muted);
+        /* Nagłówek aplikacji */
+        .app-title {
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.3rem;
+        }
+
+        .app-subtitle {
+            text-align: center;
+            color: var(--text-muted) !important;
+            max-width: 620px;
+            margin: 0 auto 1.5rem auto;
+            font-size: 0.95rem;
         }
 
         /* Karty metric – hero sekcja */
@@ -98,15 +114,20 @@ def inject_css():
         }
 
         div[data-testid="stMetricLabel"] {
-            color: #4b5563 !important;        /* zawsze widoczne */
+            color: #4b5563 !important;
             font-size: 0.95rem !important;
             font-weight: 500 !important;
         }
 
         div[data-testid="stMetricValue"] {
-            font-size: 1.8rem !important;      /* większe liczby */
+            font-size: 2.0rem !important;
             font-weight: 700 !important;
-            color: #111827 !important;         /* ciemny, wyraźny */
+            color: #111827 !important;
+        }
+
+        /* 3. metric (FX) – mniejsza liczba */
+        div[data-testid="metric-container"]:nth-of-type(3) div[data-testid="stMetricValue"] {
+            font-size: 1.4rem !important;
         }
 
         /* Tabele - pandas HTML (overview & savings) */
@@ -122,13 +143,14 @@ def inject_css():
             border: 1px solid #e5e7eb;
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
+            color: var(--text-main) !important;
         }
         table.dataframe th {
             background-color: #f9fafb;
             font-weight: 600;
         }
 
-        /* Tabela w zakładce Pozycje rynkowe – max szerokość + centrowanie */
+        /* Tabela w zakładce Pozycje rynkowe – zostawiamy, tylko kolor tekstu */
         .portfolio-table {
             max-width: 1000px;
             margin: 0 auto;
@@ -146,6 +168,7 @@ def inject_css():
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
             text-align: right;
+            color: var(--text-main) !important;
         }
         .portfolio-table th:nth-child(1),
         .portfolio-table td:nth-child(1),
@@ -159,12 +182,12 @@ def inject_css():
         }
 
         /* Ikony trendu i P/L */
-        .trend-up { color: #16a34a; font-weight: 600; }
-        .trend-down { color: #dc2626; font-weight: 600; }
-        .trend-flat { color: #6b7280; }
+        .trend-up { color: #16a34a !important; font-weight: 600; }
+        .trend-down { color: #dc2626 !important; font-weight: 600; }
+        .trend-flat { color: #6b7280 !important; }
 
-        .pl-positive { color: #16a34a; font-weight: 600; }
-        .pl-negative { color: #dc2626; font-weight: 600; }
+        .pl-positive { color: #16a34a !important; font-weight: 600; }
+        .pl-negative { color: #dc2626 !important; font-weight: 600; }
 
         /* Zakładki – zawsze widoczne, spójna tonacja */
         button[role="tab"] {
@@ -179,6 +202,22 @@ def inject_css():
         button[role="tab"][aria-selected="true"] {
             color: var(--text-main) !important;
             border-bottom: 2px solid var(--accent-color) !important;
+        }
+
+        /* Plotly – jasne tło, żadnej czerni */
+        .stPlotlyChart {
+            background-color: var(--bg-card) !important;
+            padding: 1rem !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        /* Alerty (info, warning, success) – jasne tło, ciemny tekst */
+        .stAlert {
+            background-color: #fefce8 !important;  /* pastelowy żółty */
+            color: #92400e !important;
+            border-radius: 12px !important;
+            border: 1px solid #facc15 !important;
         }
 
         /* Usunięcie defaultowego menu/footera Streamlit */
@@ -455,13 +494,16 @@ def main():
     st.set_page_config(
         page_title="Local Portfolio Tracker & Pension Plan",
         page_icon="💰",
-        layout="wide"
+        layout="wide",
     )
     inject_css()
 
     # GŁÓWNY NAGŁÓWEK
-    st.title("💰 Local Portfolio Tracker & Pension Plan")
-    st.caption("Twoje portfolio, Twoje bezpieczeństwo. Dane rynkowe + planowanie finansowe.")
+    st.markdown('<h1 class="app-title">💰 Local Portfolio Tracker & Pension Plan</h1>', unsafe_allow_html=True)
+    st.markdown(
+        '<p class="app-subtitle">Twoje portfolio, Twoje bezpieczeństwo. Dane rynkowe + planowanie finansowe.</p>',
+        unsafe_allow_html=True,
+    )
 
     # ---------------- SIDEBAR – dostęp ----------------
     st.sidebar.header("🔒 Dostęp")
@@ -675,6 +717,11 @@ Przykłady:
                 values="Value_PLN",
                 title="Skład portfela (PLN) – Crypto / Stock / Stock IKE / Stock IKZE",
             )
+            fig_pie.update_layout(
+                paper_bgcolor="white",
+                plot_bgcolor="white",
+                font_color="#111827",
+            )
             st.plotly_chart(fig_pie, use_container_width=True)
 
             st.markdown("---")
@@ -712,7 +759,13 @@ Przykłady:
                 y="Value_PLN",
                 title="Podział według poziomu ryzyka (PLN)",
             )
-            fig_risk.update_layout(xaxis_title="", yaxis_title="Wartość (PLN)")
+            fig_risk.update_layout(
+                xaxis_title="",
+                yaxis_title="Wartość (PLN)",
+                paper_bgcolor="white",
+                plot_bgcolor="white",
+                font_color="#111827",
+            )
             st.plotly_chart(fig_risk, use_container_width=True)
 
             total_risk_base = safe_pln + stocks_pln + crypto_pln
@@ -759,7 +812,13 @@ Przykłady:
                     y="Value_PLN",
                     title="Podział portfela według waluty ekspozycji (PLN)",
                 )
-                fig_curr.update_layout(xaxis_title="Waluta", yaxis_title="Wartość (PLN)")
+                fig_curr.update_layout(
+                    xaxis_title="Waluta",
+                    yaxis_title="Wartość (PLN)",
+                    paper_bgcolor="white",
+                    plot_bgcolor="white",
+                    font_color="#111827",
+                )
                 st.plotly_chart(fig_curr, use_container_width=True)
         else:
             st.info("Brak danych do wyświetlenia struktury portfela.")
@@ -990,264 +1049,4 @@ z założeniem, że środki mają wystarczyć mniej więcej do 90. roku życia.
             zus_monthly_today = salary_net * 0.25
             st.caption(
                 f"Na potrzeby obliczeń przyjmujemy, że Twoja przyszła emerytura z ZUS (w dzisiejszych pieniądzach) "
-                f"wyniesie ok. 25% wynagrodzenia netto, czyli **{zus_monthly_today:,.2f} PLN/miesiąc**."
-            )
-        else:
-            zus_monthly_today = 0.0
-            st.caption(
-                "W tym modelu przyjmujemy, że nie będziesz otrzymywać realnej emerytury z ZUS (0 PLN). "
-                "To bardzo konserwatywne założenie."
-            )
-
-        (
-            required_capital,
-            future_monthly,
-            future_yearly,
-            yearly_gap_after_zus,
-        ) = required_capital_finite_horizon(
-            monthly_needs_today,
-            years_to_retirement,
-            years_of_retirement,
-            inflation,
-            zus_monthly_today,
-            real_return,
-        )
-
-        st.session_state["rp_required_capital"] = float(required_capital)
-        st.session_state["rp_years_to_retirement"] = int(years_to_retirement)
-        st.session_state["rp_years_of_retirement"] = int(years_of_retirement)
-        # osobne klucze, żeby nie nadpisywać widgetów:
-        st.session_state["rp_age_now_val"] = int(age_now)
-        st.session_state["rp_age_retire_val"] = int(age_retire)
-
-        st.markdown("### Wyniki – model do 90. roku życia")
-
-        st.write(f"Przyszłe miesięczne koszty (po inflacji): **{future_monthly:,.2f} PLN**")
-        st.write(f"Przyszłe roczne koszty (po inflacji): **{future_yearly:,.2f} PLN**")
-        st.write(f"Roczne koszty po uwzględnieniu ZUS: **{yearly_gap_after_zus:,.2f} PLN**")
-
-        if yearly_gap_after_zus == 0:
-            st.info(
-                "Przy tych założeniach prognozowana emerytura z ZUS w pełni pokrywa Twoje koszty życia. "
-                "W tym modelu nie potrzebujesz dodatkowego kapitału, dlatego wymagany kapitał wynosi 0 PLN."
-            )
-
-        st.write(
-            f"**Wymagany kapitał emerytalny na starcie emerytury:** **{required_capital:,.2f} PLN** "
-            f"(okres emerytury: {years_of_retirement} lat)."
-        )
-
-        portfolio_market_pln = total_pln
-        st.write(
-            f"**Twój obecny majątek inwestycyjny (portfel + obligacje + PPK): {portfolio_now:,.2f} PLN**"
-        )
-        st.caption(
-            f"- Portfel rynkowy (akcje/ETF/krypto): {portfolio_market_pln:,.2f} PLN  \n"
-            f"- Obligacje skarbowe: {bonds_value:,.2f} PLN  \n"
-            f"- PPK: {ppk_value:,.2f} PLN"
-        )
-
-        gap = required_capital - portfolio_now
-        if required_capital == 0 and yearly_gap_after_zus == 0:
-            st.success(
-                "Według tych założeń Twoja emerytura z ZUS sama pokrywa koszty życia. "
-                "Twoje inwestycje są nadwyżką / dodatkową poduszką bezpieczeństwa. 💚"
-            )
-        else:
-            if gap > 0:
-                st.warning(f"Brakuje Ci ok. **{gap:,.2f} PLN** do założonego celu (w tym modelu).")
-            else:
-                st.success(
-                    "Na podstawie tych założeń masz już wystarczający kapitał (lub nadwyżkę) "
-                    "względem wymaganego poziomu. 💚"
-                )
-
-    # ---------------- TAB PENSION PROGRESS ----------------
-    with tab_progress:
-        st.subheader("📈 Pension Progress – gdzie jesteś na drodze do celu?")
-
-        required_capital = float(st.session_state.get("rp_required_capital", 0.0))
-        years_to_retirement = int(st.session_state.get("rp_years_to_retirement", 0))
-        years_of_retirement = int(st.session_state.get("rp_years_of_retirement", 0))
-        age_now_state = int(st.session_state.get("rp_age_now_val", 40))
-        age_retire_state = int(st.session_state.get("rp_age_retire_val", age_now_state + years_to_retirement))
-
-        if years_to_retirement <= 0:
-            st.info(
-                "Najpierw ustaw swoje założenia w zakładce **🧓 Retirement Planner** – "
-                "wydatki, wiek emerytury, inflację i ZUS."
-            )
-        else:
-            # ---- D: pension health ----
-            if required_capital > 0:
-                progress_ratio = portfolio_now / required_capital
-            else:
-                # ZUS pokrywa całość – traktujemy to jako 100% celu
-                progress_ratio = 1.0
-
-            if required_capital == 0:
-                health_label = "💚 Według tego modelu nie potrzebujesz dodatkowego kapitału."
-                health_text = (
-                    "Prognozowana emerytura z ZUS pokrywa w całości założone koszty życia. "
-                    "Twoje inwestycje są nadwyżką i zwiększają komfort oraz bezpieczeństwo."
-                )
-            else:
-                if progress_ratio >= 0.8:
-                    health_label = "💚 Jesteś bardzo blisko swojego celu emerytalnego."
-                    health_text = (
-                        f"Masz już około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
-                        "Jesteś w strefie zielonej – teraz chodzi raczej o dopracowanie strategii niż o pogoń za wynikiem."
-                    )
-                elif progress_ratio >= 0.4:
-                    health_label = "💛 Jesteś w połowie drogi."
-                    health_text = (
-                        f"Masz około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
-                        "Przy konsekwentnym oszczędzaniu możesz spokojnie domknąć cel."
-                    )
-                else:
-                    health_label = "❤️ Jesteś na początku drogi."
-                    health_text = (
-                        f"Masz około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
-                        "To dobry moment, żeby zbudować stałą, automatyczną ścieżkę oszczędzania."
-                    )
-
-            st.markdown(f"### {health_label}")
-            st.write(health_text)
-
-            # ---- A: pasek postępu ----
-            st.markdown("#### Twój postęp względem celu")
-
-            progress_value = min(max(progress_ratio, 0.0), 1.0)
-            st.progress(progress_value)
-
-            st.write(
-                f"Aktualny majątek (portfel + obligacje + PPK): **{portfolio_now:,.2f} PLN**"
-            )
-            if required_capital > 0:
-                st.write(
-                    f"Wymagany kapitał emerytalny (z zakładki Retirement Planner): **{required_capital:,.2f} PLN**"
-                )
-            else:
-                st.write(
-                    "Wymagany kapitał emerytalny w tym modelu wynosi **0 PLN**, "
-                    "ponieważ ZUS pokrywa w całości założone koszty życia."
-                )
-
-            st.markdown("---")
-            st.markdown("#### Prognoza kapitału do emerytury")
-
-            # scenariusz bazowy – 2.5% realnie
-            base_return = 0.025
-            recommended_monthly = required_monthly_saving(
-                required_capital,
-                portfolio_now,
-                years_to_retirement,
-                base_return,
-            )
-
-            if required_capital > 0:
-                if recommended_monthly > 0:
-                    st.write(
-                        f"Aby osiągnąć cel **{required_capital:,.0f} PLN** w scenariuszu bazowym "
-                        f"(2.5% realnej stopy zwrotu) w ciągu {years_to_retirement} lat, "
-                        f"powinnaś odkładać około **{recommended_monthly:,.0f} PLN/miesiąc**."
-                    )
-                else:
-                    st.write(
-                        "Przy obecnym poziomie majątku i czasie do emerytury "
-                        "nie potrzebujesz dodatkowych regularnych wpłat, aby osiągnąć cel w scenariuszu bazowym."
-                    )
-            else:
-                st.write(
-                    "Ponieważ w tym modelu ZUS pokrywa Twoje koszty życia, "
-                    "każda dodatkowa wpłata buduje nadwyżkę i komfort emerytalny."
-                )
-
-            default_monthly = recommended_monthly if recommended_monthly > 0 else 0.0
-
-            monthly_saving = st.number_input(
-                "Planowana miesięczna kwota oszczędzania do emerytury (PLN):",
-                min_value=0.0,
-                value=float(round(default_monthly)) if default_monthly > 0 else 0.0,
-                step=200.0,
-                key="pp_monthly_saving",
-            )
-
-            st.caption(
-                "Możesz tu wpisać kwotę, którą realnie jesteś w stanie odkładać co miesiąc, "
-                "a poniższy wykres pokaże, dokąd może Cię to doprowadzić w różnych scenariuszach rynkowych."
-            )
-
-            ages = [age_now_state + i for i in range(1, years_to_retirement + 1)]
-
-            scenarios = [
-                ("Pesymistyczny (1% realnie)", 0.01),
-                ("Bazowy (2.5% realnie)", 0.025),
-                ("Optymistyczny (4% realnie)", 0.04),
-            ]
-
-            rows = []
-            final_base = None
-
-            for name, r in scenarios:
-                values = simulate_future_wealth(portfolio_now, monthly_saving, years_to_retirement, r)
-                for age, val in zip(ages, values):
-                    rows.append({"Age": age, "Scenario": name, "Value_PLN": val})
-                if "Bazowy" in name and values:
-                    final_base = values[-1]
-
-            if rows:
-                proj_df = pd.DataFrame(rows)
-
-                st.markdown(
-                    """
-**Scenariusze na wykresie:**
-- *Pesymistyczny (1% realnie)* – rynki zachowują się słabo, zyski z inwestycji są niewielkie.  
-- *Bazowy (2.5% realnie)* – realistyczny, długoterminowy wynik spokojnego portfela (obligacje + ETF-y).  
-- *Optymistyczny (4% realnie)* – dobre warunki rynkowe, wyższe realne zyski z inwestycji.
-
-Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
-"""
-                )
-
-                fig_proj = px.line(
-                    proj_df,
-                    x="Age",
-                    y="Value_PLN",
-                    color="Scenario",
-                    title="Prognozowany kapitał do wieku emerytalnego (realnie, w dzisiejszych PLN)",
-                )
-                if required_capital > 0:
-                    fig_proj.add_hline(
-                        y=required_capital,
-                        line_dash="dash",
-                        annotation_text="Wymagany kapitał",
-                        annotation_position="top left",
-                    )
-                fig_proj.update_layout(xaxis_title="Wiek", yaxis_title="Kapitał (PLN)")
-                st.plotly_chart(fig_proj, use_container_width=True)
-
-                if final_base is not None and required_capital > 0:
-                    share = final_base / required_capital
-                    if share >= 1:
-                        st.success(
-                            f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
-                            f"osiągniesz około **{final_base:,.0f} PLN**, czyli **{share*100:,.1f}%** wymaganego kapitału."
-                        )
-                    else:
-                        st.warning(
-                            f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
-                            f"osiągniesz około **{final_base:,.0f} PLN**, czyli **{share*100:,.1f}%** wymaganego kapitału."
-                        )
-                elif final_base is not None and required_capital == 0:
-                    st.info(
-                        f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
-                        f"zbudujesz do emerytury kapitał około **{final_base:,.0f} PLN** "
-                        "– będzie to nadwyżka ponad koszty pokrywane przez ZUS."
-                    )
-            else:
-                st.info("Brak danych do narysowania prognozy kapitału.")
-
-
-if __name__ == "__main__":
-    main()
+                f"

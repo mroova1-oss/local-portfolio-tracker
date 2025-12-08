@@ -427,7 +427,7 @@ def main():
 
     # ---------------- SIDEBAR – dostęp ----------------
     st.sidebar.header("🔒 Dostęp")
-    pw = st.sidebar.text_input("Hasło dostępu", type="password")
+    pw = st.sidebar.text_input("Hasło dostępu", type="password", key="password_input")
 
     if pw != PASSWORD:
         st.warning("Podaj poprawne hasło, aby zobaczyć swój portfel.")
@@ -1000,3 +1000,216 @@ z założeniem, że środki mają wystarczyć mniej więcej do 90. roku życia.
         )
 
         portfolio_market_pln = total_pln
+        st.write(
+            f"**Twój obecny majątek inwestycyjny (portfel + obligacje + PPK): {portfolio_now:,.2f} PLN**"
+        )
+        st.caption(
+            f"- Portfel rynkowy (akcje/ETF/krypto): {portfolio_market_pln:,.2f} PLN  \n"
+            f"- Obligacje skarbowe: {bonds_value:,.2f} PLN  \n"
+            f"- PPK: {ppk_value:,.2f} PLN"
+        )
+
+        gap = required_capital - portfolio_now
+        if required_capital == 0 and yearly_gap_after_zus == 0:
+            st.success(
+                "Według tych założeń Twoja emerytura z ZUS sama pokrywa koszty życia. "
+                "Twoje inwestycje są nadwyżką / dodatkową poduszką bezpieczeństwa. 💚"
+            )
+        else:
+            if gap > 0:
+                st.warning(f"Brakuje Ci ok. **{gap:,.2f} PLN** do założonego celu (w tym modelu).")
+            else:
+                st.success(
+                    "Na podstawie tych założeń masz już wystarczający kapitał (lub nadwyżkę) "
+                    "względem wymaganego poziomu. 💚"
+                )
+
+    # ---------------- TAB PENSION PROGRESS ----------------
+    with tab_progress:
+        st.subheader("📈 Pension Progress – gdzie jesteś na drodze do celu?")
+
+        required_capital = float(st.session_state.get("rp_required_capital", 0.0))
+        years_to_retirement = int(st.session_state.get("rp_years_to_retirement", 0))
+        years_of_retirement = int(st.session_state.get("rp_years_of_retirement", 0))
+        age_now_state = int(st.session_state.get("rp_age_now_val", 40))
+        age_retire_state = int(st.session_state.get("rp_age_retire_val", age_now_state + years_to_retirement))
+
+        if years_to_retirement <= 0:
+            st.info(
+                "Najpierw ustaw swoje założenia w zakładce **🧓 Retirement Planner** – "
+                "wydatki, wiek emerytury, inflację i ZUS."
+            )
+        else:
+            # ---- D: pension health ----
+            if required_capital > 0:
+                progress_ratio = portfolio_now / required_capital
+            else:
+                # ZUS pokrywa całość – traktujemy to jako 100% celu
+                progress_ratio = 1.0
+
+            if required_capital == 0:
+                health_label = "💚 Według tego modelu nie potrzebujesz dodatkowego kapitału."
+                health_text = (
+                    "Prognozowana emerytura z ZUS pokrywa w całości założone koszty życia. "
+                    "Twoje inwestycje są nadwyżką i zwiększają komfort oraz bezpieczeństwo."
+                )
+            else:
+                if progress_ratio >= 0.8:
+                    health_label = "💚 Jesteś bardzo blisko swojego celu emerytalnego."
+                    health_text = (
+                        f"Masz już około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
+                        "Jesteś w strefie zielonej – teraz chodzi raczej o dopracowanie strategii niż o pogoń za wynikiem."
+                    )
+                elif progress_ratio >= 0.4:
+                    health_label = "💛 Jesteś w połowie drogi."
+                    health_text = (
+                        f"Masz około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
+                        "Przy konsekwentnym oszczędzaniu możesz spokojnie domknąć cel."
+                    )
+                else:
+                    health_label = "❤️ Jesteś na początku drogi."
+                    health_text = (
+                        f"Masz około **{progress_ratio*100:,.1f}%** wymaganego kapitału. "
+                        "To dobry moment, żeby zbudować stałą, automatyczną ścieżkę oszczędzania."
+                    )
+
+            st.markdown(f"### {health_label}")
+            st.write(health_text)
+
+            # ---- A: pasek postępu ----
+            st.markdown("#### Twój postęp względem celu")
+
+            progress_value = min(max(progress_ratio, 0.0), 1.0)
+            st.progress(progress_value)
+
+            st.write(
+                f"Aktualny majątek (portfel + obligacje + PPK): **{portfolio_now:,.2f} PLN**"
+            )
+            if required_capital > 0:
+                st.write(
+                    f"Wymagany kapitał emerytalny (z zakładki Retirement Planner): **{required_capital:,.2f} PLN**"
+                )
+            else:
+                st.write(
+                    "Wymagany kapitał emerytalny w tym modelu wynosi **0 PLN**, "
+                    "ponieważ ZUS pokrywa w całości założone koszty życia."
+                )
+
+            st.markdown("---")
+            st.markdown("#### Prognoza kapitału do emerytury")
+
+            # scenariusz bazowy – 2.5% realnie
+            base_return = 0.025
+            recommended_monthly = required_monthly_saving(
+                required_capital,
+                portfolio_now,
+                years_to_retirement,
+                base_return,
+            )
+
+            if required_capital > 0:
+                if recommended_monthly > 0:
+                    st.write(
+                        f"Aby osiągnąć cel **{required_capital:,.0f} PLN** w scenariuszu bazowym "
+                        f"(2.5% realnej stopy zwrotu) w ciągu {years_to_retirement} lat, "
+                        f"powinnaś odkładać około **{recommended_monthly:,.0f} PLN/miesiąc**."
+                    )
+                else:
+                    st.write(
+                        "Przy obecnym poziomie majątku i czasie do emerytury "
+                        "nie potrzebujesz dodatkowych regularnych wpłat, aby osiągnąć cel w scenariuszu bazowym."
+                    )
+            else:
+                st.write(
+                    "Ponieważ w tym modelu ZUS pokrywa Twoje koszty życia, "
+                    "każda dodatkowa wpłata buduje nadwyżkę i komfort emerytalny."
+                )
+
+            default_monthly = recommended_monthly if recommended_monthly > 0 else 0.0
+
+            monthly_saving = st.number_input(
+                "Planowana miesięczna kwota oszczędzania do emerytury (PLN):",
+                min_value=0.0,
+                value=float(round(default_monthly)) if default_monthly > 0 else 0.0,
+                step=200.0,
+                key="pp_monthly_saving",
+            )
+
+            st.caption(
+                "Możesz tu wpisać kwotę, którą realnie jesteś w stanie odkładać co miesiąc, "
+                "a poniższy wykres pokaże, dokąd może Cię to doprowadzić w różnych scenariuszach rynkowych."
+            )
+
+            ages = [age_now_state + i for i in range(1, years_to_retirement + 1)]
+
+            scenarios = [
+                ("Pesymistyczny (1% realnie)", 0.01),
+                ("Bazowy (2.5% realnie)", 0.025),
+                ("Optymistyczny (4% realnie)", 0.04),
+            ]
+
+            rows = []
+            final_base = None
+
+            for name, r in scenarios:
+                values = simulate_future_wealth(portfolio_now, monthly_saving, years_to_retirement, r)
+                for age, val in zip(ages, values):
+                    rows.append({"Age": age, "Scenario": name, "Value_PLN": val})
+                if "Bazowy" in name and values:
+                    final_base = values[-1]
+
+            if rows:
+                proj_df = pd.DataFrame(rows)
+
+                st.markdown(
+                    """
+**Scenariusze na wykresie:**
+- *Pesymistyczny (1% realnie)* – rynki zachowują się słabo, zyski z inwestycji są niewielkie.  
+- *Bazowy (2.5% realnie)* – realistyczny, długoterminowy wynik spokojnego portfela (obligacje + ETF-y).  
+- *Optymistyczny (4% realnie)* – dobre warunki rynkowe, wyższe realne zyski z inwestycji.
+
+Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
+"""
+                )
+
+                fig_proj = px.line(
+                    proj_df,
+                    x="Age",
+                    y="Value_PLN",
+                    color="Scenario",
+                    title="Prognozowany kapitał do wieku emerytalnego (realnie, w dzisiejszych PLN)",
+                )
+                if required_capital > 0:
+                    fig_proj.add_hline(
+                        y=required_capital,
+                        line_dash="dash",
+                        annotation_text="Wymagany kapitał",
+                        annotation_position="top left",
+                    )
+                fig_proj.update_layout(xaxis_title="Wiek", yaxis_title="Kapitał (PLN)")
+                st.plotly_chart(fig_proj, use_container_width=True)
+
+                if final_base is not None and required_capital > 0:
+                    share = final_base / required_capital
+                    if share >= 1:
+                        st.success(
+                            f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
+                            f"osiągniesz około **{final_base:,.0f} PLN**, czyli **{share*100:,.1f}%** wymaganego kapitału."
+                        )
+                    else:
+                        st.warning(
+                            f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
+                            f"osiągniesz około **{final_base:,.0f} PLN**, czyli **{share*100:,.1f}%** wymaganego kapitału."
+                        )
+                elif final_base is not None and required_capital == 0:
+                    st.info(
+                        f"Przy wpłacie **{monthly_saving:,.0f} PLN/miesiąc** w scenariuszu bazowym "
+                        f"zbudujesz do emerytury kapitał około **{final_base:,.0f} PLN** "
+                        "– będzie to nadwyżka ponad koszty pokrywane przez ZUS."
+                    )
+            else:
+                st.info("Brak danych do narysowania prognozy kapitału.")
+
+
+if __name__ == "__main__":
+    main()

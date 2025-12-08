@@ -30,12 +30,26 @@ def inject_css():
         """
         <style>
         :root {
-            --primary-color: #1f6feb;
-            --bg-main: #f5f7fb;
-            --bg-card: #ffffff;
-            --border-soft: #e0e4ec;
-            --text-main: #111827;
-            --text-muted: #6b7280;
+            --primary-color: #2563eb;      /* niebieski */
+            --accent-color:  #f97316;      /* lekko pomarańczowy */
+            --bg-main:       #f3f4f6;      /* jasnoszary */
+            --bg-card:       #ffffff;
+            --border-soft:   #e5e7eb;
+            --text-main:     #111827;
+            --text-muted:    #6b7280;
+        }
+
+        html, body {
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        /* Główna kolumna – centrowanie i max szerokość */
+        [data-testid="stAppViewContainer"] > .main .block-container {
+            max-width: 1200px;
+            padding-top: 1.5rem;
+            padding-bottom: 2rem;
+            margin: 0 auto;
         }
 
         /* Tło aplikacji */
@@ -44,22 +58,34 @@ def inject_css():
             color: var(--text-main);
         }
 
-        /* Sidebar */
+        /* Sidebar – jasny, stonowany */
         [data-testid="stSidebar"] {
             background: #ffffff;
             border-right: 1px solid var(--border-soft);
         }
 
-        [data-testid="stSidebar"] h1, 
-        [data-testid="stSidebar"] h2, 
-        [data-testid="stSidebar"] h3 {
+        [data-testid="stSidebar"] * {
             color: var(--text-main);
+        }
+
+        /* Jasne pola input/textarea nawet przy dark theme na koncie */
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stNumberInput"] input {
+            background: #f9fafb !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-soft) !important;
         }
 
         /* Nagłówek aplikacji */
         .main > div:first-child h1 {
             font-weight: 700;
             letter-spacing: 0.02em;
+        }
+
+        /* Podtytuł */
+        .main > div:first-child p {
+            color: var(--text-muted);
         }
 
         /* Karty metric */
@@ -97,11 +123,15 @@ def inject_css():
             font-size: 0.9rem;
         }
         table.dataframe th {
-            background-color: #f3f4f6;
+            background-color: #f9fafb;
             font-weight: 600;
         }
 
-        /* Tabela w zakładce Pozycje rynkowe */
+        /* Tabela w zakładce Pozycje rynkowe – max szerokość + centrowanie */
+        .portfolio-table {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
         .portfolio-table table {
             border-collapse: collapse;
             width: 100%;
@@ -123,24 +153,31 @@ def inject_css():
             text-align: left;
         }
         .portfolio-table th {
-            background-color: #f3f4f6;
+            background-color: #f9fafb;
             font-weight: 600;
         }
 
         /* Ikony trendu i P/L */
-        .trend-up { color: #0A7D32; font-weight: 600; }
-        .trend-down { color: #B30000; font-weight: 600; }
-        .trend-flat { color: #666666; }
+        .trend-up { color: #16a34a; font-weight: 600; }
+        .trend-down { color: #dc2626; font-weight: 600; }
+        .trend-flat { color: #6b7280; }
 
-        .pl-positive { color: #0A7D32; font-weight: 600; }
-        .pl-negative { color: #B30000; font-weight: 600; }
+        .pl-positive { color: #16a34a; font-weight: 600; }
+        .pl-negative { color: #dc2626; font-weight: 600; }
 
-        /* Zakładki */
-        button[data-baseweb="tab"] {
+        /* Zakładki – zawsze widoczne, spójna tonacja */
+        button[role="tab"] {
             font-size: 0.9rem !important;
             font-weight: 500 !important;
             padding-top: 0.4rem !important;
             padding-bottom: 0.4rem !important;
+            color: var(--text-muted) !important;
+            border-bottom: 2px solid transparent !important;
+            background: transparent !important;
+        }
+        button[role="tab"][aria-selected="true"] {
+            color: var(--text-main) !important;
+            border-bottom: 2px solid var(--accent-color) !important;
         }
 
         /* Usunięcie defaultowego menu/footera Streamlit */

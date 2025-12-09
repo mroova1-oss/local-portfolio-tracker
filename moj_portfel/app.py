@@ -78,7 +78,6 @@ def inject_css():
             background: #ffffff;
             border-right: 1px solid var(--border-soft);
         }
-
         [data-testid="stSidebar"] * {
             color: var(--text-main);
         }
@@ -153,8 +152,12 @@ def inject_css():
             font-size: 1.4rem !important;
         }
 
-        /* Tabele - pandas HTML (overview & savings) */
-        table.dataframe {
+        /* Tabele z pandas (st.table) – jasne i czytelne */
+        [data-testid="stTable"] {
+            max-width: 1000px;
+            margin: 0 auto 1.25rem auto;
+        }
+        [data-testid="stTable"] table {
             border-collapse: collapse;
             width: 100%;
             background: var(--bg-card);
@@ -162,21 +165,22 @@ def inject_css():
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
         }
-        table.dataframe th, table.dataframe td {
+        [data-testid="stTable"] th,
+        [data-testid="stTable"] td {
             border: 1px solid #e5e7eb;
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
-            color: var(--text-main);
+            color: var(--text-main) !important;
         }
-        table.dataframe th {
-            background-color: #f9fafb;
-            font-weight: 600;
+        [data-testid="stTable"] th {
+            background-color: #f9fafb !important;
+            font-weight: 600 !important;
         }
 
         /* Tabela w zakładce Pozycje rynkowe */
         .portfolio-table {
             max-width: 1000px;
-            margin: 0 auto;
+            margin: 0 auto 1.25rem auto;
         }
         .portfolio-table table {
             border-collapse: collapse;
@@ -227,12 +231,14 @@ def inject_css():
             border-bottom: 2px solid var(--accent-color) !important;
         }
 
-        /* Plotly - jasne tło, zero czerni */
-        .stPlotlyChart {
+        /* Plotly - jasne tło, centrowanie, brak czerni */
+        [data-testid="stPlotlyChart"] {
             background-color: var(--bg-card) !important;
             padding: 1rem !important;
             border-radius: 16px !important;
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+            max-width: 1000px;
+            margin: 0 auto 1.5rem auto;
         }
 
         /* Alerty (info, warning, success) - jasne tło, ciemny tekst */
@@ -742,6 +748,8 @@ Przykłady:
                 paper_bgcolor="white",
                 plot_bgcolor="white",
                 font_color="#111827",
+                legend_title_font_color="#111827",
+                legend_font_color="#111827",
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
@@ -788,9 +796,19 @@ Przykłady:
                 paper_bgcolor="white",
                 plot_bgcolor="white",
                 font_color="#111827",
+                legend_title_font_color="#111827",
+                legend_font_color="#111827",
             )
-            fig_risk.update_xaxes(showgrid=False)
-            fig_risk.update_yaxes(gridcolor="#e5e7eb")
+            fig_risk.update_xaxes(
+                showgrid=False,
+                tickfont=dict(color="#111827"),
+                titlefont=dict(color="#111827"),
+            )
+            fig_risk.update_yaxes(
+                gridcolor="#e5e7eb",
+                tickfont=dict(color="#111827"),
+                titlefont=dict(color="#111827"),
+            )
             st.plotly_chart(fig_risk, use_container_width=True)
 
             total_risk_base = safe_pln + stocks_pln + crypto_pln
@@ -845,9 +863,19 @@ Przykłady:
                     paper_bgcolor="white",
                     plot_bgcolor="white",
                     font_color="#111827",
+                    legend_title_font_color="#111827",
+                    legend_font_color="#111827",
                 )
-                fig_curr.update_xaxes(showgrid=False)
-                fig_curr.update_yaxes(gridcolor="#e5e7eb")
+                fig_curr.update_xaxes(
+                    showgrid=False,
+                    tickfont=dict(color="#111827"),
+                    titlefont=dict(color="#111827"),
+                )
+                fig_curr.update_yaxes(
+                    gridcolor="#e5e7eb",
+                    tickfont=dict(color="#111827"),
+                    titlefont=dict(color="#111827"),
+                )
                 st.plotly_chart(fig_curr, use_container_width=True)
         else:
             st.info("Brak danych do wyświetlenia struktury portfela.")
@@ -1314,9 +1342,19 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                     paper_bgcolor="white",
                     plot_bgcolor="white",
                     font_color="#111827",
+                    legend_title_font_color="#111827",
+                    legend_font_color="#111827",
                 )
-                fig_proj.update_xaxes(showgrid=False)
-                fig_proj.update_yaxes(gridcolor="#e5e7eb")
+                fig_proj.update_xaxes(
+                    showgrid=False,
+                    tickfont=dict(color="#111827"),
+                    titlefont=dict(color="#111827"),
+                )
+                fig_proj.update_yaxes(
+                    gridcolor="#e5e7eb",
+                    tickfont=dict(color="#111827"),
+                    titlefont=dict(color="#111827"),
+                )
                 st.plotly_chart(fig_proj, use_container_width=True)
 
                 if final_base is not None and required_capital > 0:

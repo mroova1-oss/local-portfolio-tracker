@@ -57,8 +57,7 @@ def inject_css():
             background: var(--bg-main);
         }
 
-        /* Wymuś ciemny kolor tekstu w głównej części appki
-           (bez wpływu na elementy SVG używane przez wykresy) */
+        /* Wymuś ciemny kolor tekstu w głównej części appki */
         .block-container h1,
         .block-container h2,
         .block-container h3,
@@ -799,16 +798,8 @@ Przykłady:
                 legend_title_font_color="#111827",
                 legend_font_color="#111827",
             )
-            fig_risk.update_xaxes(
-                showgrid=False,
-                tickfont=dict(color="#111827"),
-                titlefont=dict(color="#111827"),
-            )
-            fig_risk.update_yaxes(
-                gridcolor="#e5e7eb",
-                tickfont=dict(color="#111827"),
-                titlefont=dict(color="#111827"),
-            )
+            fig_risk.update_xaxes(showgrid=False)
+            fig_risk.update_yaxes(gridcolor="#e5e7eb")
             st.plotly_chart(fig_risk, use_container_width=True)
 
             total_risk_base = safe_pln + stocks_pln + crypto_pln
@@ -866,16 +857,8 @@ Przykłady:
                     legend_title_font_color="#111827",
                     legend_font_color="#111827",
                 )
-                fig_curr.update_xaxes(
-                    showgrid=False,
-                    tickfont=dict(color="#111827"),
-                    titlefont=dict(color="#111827"),
-                )
-                fig_curr.update_yaxes(
-                    gridcolor="#e5e7eb",
-                    tickfont=dict(color="#111827"),
-                    titlefont=dict(color="#111827"),
-                )
+                fig_curr.update_xaxes(showgrid=False)
+                fig_curr.update_yaxes(gridcolor="#e5e7eb")
                 st.plotly_chart(fig_curr, use_container_width=True)
         else:
             st.info("Brak danych do wyświetlenia struktury portfela.")
@@ -1345,16 +1328,8 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                     legend_title_font_color="#111827",
                     legend_font_color="#111827",
                 )
-                fig_proj.update_xaxes(
-                    showgrid=False,
-                    tickfont=dict(color="#111827"),
-                    titlefont=dict(color="#111827"),
-                )
-                fig_proj.update_yaxes(
-                    gridcolor="#e5e7eb",
-                    tickfont=dict(color="#111827"),
-                    titlefont=dict(color="#111827"),
-                )
+                fig_proj.update_xaxes(showgrid=False)
+                fig_proj.update_yaxes(gridcolor="#e5e7eb")
                 st.plotly_chart(fig_proj, use_container_width=True)
 
                 if final_base is not None and required_capital > 0:

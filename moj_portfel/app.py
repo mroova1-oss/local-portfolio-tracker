@@ -57,6 +57,22 @@ def inject_css():
             background: var(--bg-main);
         }
 
+        /* Wymuś ciemny kolor tekstu w głównej części appki
+           (bez wpływu na elementy SVG używane przez wykresy) */
+        .block-container h1,
+        .block-container h2,
+        .block-container h3,
+        .block-container h4,
+        .block-container h5,
+        .block-container h6,
+        .block-container p,
+        .block-container li,
+        .block-container label,
+        .block-container small,
+        .block-container span {
+            color: var(--text-main) !important;
+        }
+
         /* Sidebar - jasny, bez czerni */
         [data-testid="stSidebar"] {
             background: #ffffff;

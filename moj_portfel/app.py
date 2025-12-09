@@ -32,7 +32,7 @@ def inject_css():
         <style>
         :root {
             --primary-color: #2563eb;      /* niebieski */
-            --accent-color:  #f97316;      /* lekko pomaranczowy */
+            --accent-color:  #f97316;      /* lekko pomarańczowy */
             --bg-main:       #f3f4f6;      /* jasnoszary */
             --bg-card:       #ffffff;
             --border-soft:   #e5e7eb;
@@ -42,15 +42,10 @@ def inject_css():
 
         html, body {
             background: var(--bg-main);
+            color: var(--text-main);
         }
 
-        /* Globalne wymuszenie jasnego tekstu */
-        body, body * {
-            color: var(--text-main) !important;
-            box-shadow: none;
-        }
-
-        /* Glowna kolumna - centrowanie i max szerokosc */
+        /* Główna kolumna - centrowanie i max szerokość */
         [data-testid="stAppViewContainer"] > .main .block-container {
             max-width: 1000px;
             padding-top: 1.5rem;
@@ -69,17 +64,25 @@ def inject_css():
         }
 
         [data-testid="stSidebar"] * {
-            color: var(--text-main) !important;
+            color: var(--text-main);
         }
 
-        /* Pola input / textarea / select - jasne tlo, ciemny tekst */
+        /* Pola input / textarea / select - jasne tło, ciemny tekst */
         input, textarea, select {
             background: #f9fafb !important;
             color: var(--text-main) !important;
             border: 1px solid var(--border-soft) !important;
         }
 
-        /* Przyciski (w tym "Odswiez") */
+        /* Kod / przykłady w sidebarze – jasne tło zamiast czarnego */
+        code, pre {
+            background-color: #e5e7eb !important;
+            color: #111827 !important;
+            border-radius: 4px;
+            padding: 0.05rem 0.25rem;
+        }
+
+        /* Przyciski (w tym "Odśwież") */
         button, [data-testid="stSidebar"] button {
             background: var(--primary-color) !important;
             color: #ffffff !important;
@@ -90,16 +93,17 @@ def inject_css():
             filter: brightness(0.95);
         }
 
-        /* Naglowek aplikacji */
+        /* Nagłówek aplikacji */
         .app-title {
             font-weight: 700;
             letter-spacing: 0.02em;
             margin-bottom: 0.3rem;
+            text-align: center;
         }
 
         .app-subtitle {
             text-align: center;
-            color: var(--text-muted) !important;
+            color: var(--text-muted);
             max-width: 620px;
             margin: 0 auto 1.5rem auto;
             font-size: 0.95rem;
@@ -118,12 +122,14 @@ def inject_css():
             color: #4b5563 !important;
             font-size: 0.95rem !important;
             font-weight: 500 !important;
+            text-align: center !important;
         }
 
         div[data-testid="stMetricValue"] {
             font-size: 2.0rem !important;
             font-weight: 700 !important;
             color: #111827 !important;
+            text-align: center !important;
         }
 
         /* 3. metric (FX) - mniejsza liczba */
@@ -144,14 +150,14 @@ def inject_css():
             border: 1px solid #e5e7eb;
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
-            color: var(--text-main) !important;
+            color: var(--text-main);
         }
         table.dataframe th {
             background-color: #f9fafb;
             font-weight: 600;
         }
 
-        /* Tabela w zakladce Pozycje rynkowe */
+        /* Tabela w zakładce Pozycje rynkowe */
         .portfolio-table {
             max-width: 1000px;
             margin: 0 auto;
@@ -169,7 +175,7 @@ def inject_css():
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
             text-align: right;
-            color: var(--text-main) !important;
+            color: var(--text-main);
         }
         .portfolio-table th:nth-child(1),
         .portfolio-table td:nth-child(1),
@@ -190,7 +196,7 @@ def inject_css():
         .pl-positive { color: #16a34a !important; font-weight: 600; }
         .pl-negative { color: #dc2626 !important; font-weight: 600; }
 
-        /* Zakladki - zawsze widoczne */
+        /* Zakładki - zawsze widoczne */
         button[role="tab"] {
             font-size: 0.9rem !important;
             font-weight: 500 !important;
@@ -205,7 +211,7 @@ def inject_css():
             border-bottom: 2px solid var(--accent-color) !important;
         }
 
-        /* Plotly - jasne tlo, zadnej czerni */
+        /* Plotly - jasne tło, zero czerni */
         .stPlotlyChart {
             background-color: var(--bg-card) !important;
             padding: 1rem !important;
@@ -213,15 +219,14 @@ def inject_css():
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
         }
 
-        /* Alerty (info, warning, success) - jasne tlo, ciemny tekst */
+        /* Alerty (info, warning, success) - jasne tło, ciemny tekst */
         .stAlert {
-            background-color: #fefce8 !important;  /* pastelowy zolty */
+            background-color: #fefce8 !important;  /* pastelowy żółty */
             color: #92400e !important;
             border-radius: 12px !important;
             border: 1px solid #facc15 !important;
         }
 
-        /* Usuniecie defaultowego menu/footera Streamlit */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: visible;}
@@ -508,7 +513,6 @@ def main():
 
     # ---------------- SIDEBAR – dostęp ----------------
     st.sidebar.header("🔒 Dostęp")
-    # USUNIĘTY key="password_input" (powodował konflikt)
     pw = st.sidebar.text_input("Hasło dostępu", type="password")
 
     if pw != PASSWORD:
@@ -551,7 +555,7 @@ Przykłady:
     ppk_value = st.sidebar.number_input("PPK – obecna wartość", min_value=0.0, value=0.0, step=1000.0)
 
     st.sidebar.markdown("---")
-    if st.sidebar.button("🔄 Odswież dane rynkowe"):
+    if st.sidebar.button("🔄 Odśwież dane rynkowe"):
         st.cache_data.clear()
         st.rerun()
 
@@ -716,6 +720,7 @@ Przykłady:
                 names="PieCategory",
                 values="Value_PLN",
                 title="Skład portfela (PLN) – Crypto / Stock / Stock IKE / Stock IKZE",
+                color_discrete_sequence=["#3b82f6", "#6366f1", "#22c55e", "#f97316"],
             )
             fig_pie.update_layout(
                 paper_bgcolor="white",
@@ -758,6 +763,8 @@ Przykłady:
                 x="Segment",
                 y="Value_PLN",
                 title="Podział według poziomu ryzyka (PLN)",
+                color="Segment",
+                color_discrete_sequence=["#22c55e", "#3b82f6", "#f97316"],
             )
             fig_risk.update_layout(
                 xaxis_title="",
@@ -766,6 +773,8 @@ Przykłady:
                 plot_bgcolor="white",
                 font_color="#111827",
             )
+            fig_risk.update_xaxes(showgrid=False)
+            fig_risk.update_yaxes(gridcolor="#e5e7eb")
             st.plotly_chart(fig_risk, use_container_width=True)
 
             total_risk_base = safe_pln + stocks_pln + crypto_pln
@@ -811,6 +820,8 @@ Przykłady:
                     x="Currency",
                     y="Value_PLN",
                     title="Podział portfela według waluty ekspozycji (PLN)",
+                    color="Currency",
+                    color_discrete_sequence=["#3b82f6", "#22c55e", "#f97316", "#6366f1"],
                 )
                 fig_curr.update_layout(
                     xaxis_title="Waluta",
@@ -819,6 +830,8 @@ Przykłady:
                     plot_bgcolor="white",
                     font_color="#111827",
                 )
+                fig_curr.update_xaxes(showgrid=False)
+                fig_curr.update_yaxes(gridcolor="#e5e7eb")
                 st.plotly_chart(fig_curr, use_container_width=True)
         else:
             st.info("Brak danych do wyświetlenia struktury portfela.")
@@ -922,7 +935,7 @@ Przykłady:
             min_value=0.0,
             value=0.0,
             step=500.0,
-            key="savings_salary_brutto",
+            key="ppk_salary_brutto_input",
         )
 
         ppk_rows = []
@@ -1270,6 +1283,7 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                     y="Value_PLN",
                     color="Scenario",
                     title="Prognozowany kapitał do wieku emerytalnego (realnie, w dzisiejszych PLN)",
+                    color_discrete_sequence=["#3b82f6", "#22c55e", "#f97316"],
                 )
                 if required_capital > 0:
                     fig_proj.add_hline(
@@ -1285,6 +1299,8 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                     plot_bgcolor="white",
                     font_color="#111827",
                 )
+                fig_proj.update_xaxes(showgrid=False)
+                fig_proj.update_yaxes(gridcolor="#e5e7eb")
                 st.plotly_chart(fig_proj, use_container_width=True)
 
                 if final_base is not None and required_capital > 0:

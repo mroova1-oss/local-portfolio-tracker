@@ -45,9 +45,9 @@ def inject_css():
             color: var(--text-main);
         }
 
-        /* Główna kolumna - centrowanie i max szerokość */
+        /* Główna kolumna - centrowanie i max szerokość (wężej) */
         [data-testid="stAppViewContainer"] > .main .block-container {
-            max-width: 1000px;
+            max-width: 900px;
             padding-top: 1.5rem;
             padding-bottom: 2rem;
             margin: 0 auto;
@@ -57,7 +57,7 @@ def inject_css():
             background: var(--bg-main);
         }
 
-        /* Wymuś ciemny kolor tekstu w głównej części appki */
+        /* Wymuś ciemny kolor tekstu, ale bez zabijania kolorowych spanów */
         .block-container h1,
         .block-container h2,
         .block-container h3,
@@ -67,8 +67,7 @@ def inject_css():
         .block-container p,
         .block-container li,
         .block-container label,
-        .block-container small,
-        .block-container span {
+        .block-container small {
             color: var(--text-main) !important;
         }
 
@@ -88,7 +87,7 @@ def inject_css():
             border: 1px solid var(--border-soft) !important;
         }
 
-        /* Kod / przykłady w sidebarze – jasne tło zamiast czarnego */
+        /* Kod / przykłady w sidebarze – jasne tło */
         code, pre {
             background-color: #e5e7eb !important;
             color: #111827 !important;
@@ -151,9 +150,9 @@ def inject_css():
             font-size: 1.4rem !important;
         }
 
-        /* Tabele z pandas (st.table) – jasne i czytelne */
+        /* Tabele z pandas (st.table) – węższe i na środku */
         [data-testid="stTable"] {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto 1.25rem auto;
         }
         [data-testid="stTable"] table {
@@ -169,7 +168,7 @@ def inject_css():
             border: 1px solid #e5e7eb;
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
-            color: var(--text-main) !important;
+            color: var(--text-main);
         }
         [data-testid="stTable"] th {
             background-color: #f9fafb !important;
@@ -178,7 +177,7 @@ def inject_css():
 
         /* Tabela w zakładce Pozycje rynkowe */
         .portfolio-table {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto 1.25rem auto;
         }
         .portfolio-table table {
@@ -194,7 +193,6 @@ def inject_css():
             padding: 0.45rem 0.65rem;
             font-size: 0.9rem;
             text-align: right;
-            color: var(--text-main);
         }
         .portfolio-table th:nth-child(1),
         .portfolio-table td:nth-child(1),
@@ -236,16 +234,8 @@ def inject_css():
             padding: 1rem !important;
             border-radius: 16px !important;
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto 1.5rem auto;
-        }
-
-        /* Alerty (info, warning, success) - jasne tło, ciemny tekst */
-        .stAlert {
-            background-color: #fefce8 !important;  /* pastelowy żółty */
-            color: #92400e !important;
-            border-radius: 12px !important;
-            border: 1px solid #facc15 !important;
         }
 
         #MainMenu {visibility: hidden;}
@@ -742,13 +732,16 @@ Przykłady:
                 values="Value_PLN",
                 title="Skład portfela (PLN) – Crypto / Stock / Stock IKE / Stock IKZE",
                 color_discrete_sequence=["#3b82f6", "#6366f1", "#22c55e", "#f97316"],
+                template="plotly_white",
             )
             fig_pie.update_layout(
                 paper_bgcolor="white",
                 plot_bgcolor="white",
                 font_color="#111827",
+                title_font=dict(color="#111827", size=14),
                 legend_title_font_color="#111827",
                 legend_font_color="#111827",
+                legend=dict(itemclick=False, itemdoubleclick=False),
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
@@ -788,6 +781,7 @@ Przykłady:
                 title="Podział według poziomu ryzyka (PLN)",
                 color="Segment",
                 color_discrete_sequence=["#22c55e", "#3b82f6", "#f97316"],
+                template="plotly_white",
             )
             fig_risk.update_layout(
                 xaxis_title="",
@@ -795,11 +789,13 @@ Przykłady:
                 paper_bgcolor="white",
                 plot_bgcolor="white",
                 font_color="#111827",
+                title_font=dict(color="#111827", size=14),
                 legend_title_font_color="#111827",
                 legend_font_color="#111827",
+                legend=dict(itemclick=False, itemdoubleclick=False),
             )
-            fig_risk.update_xaxes(showgrid=False)
-            fig_risk.update_yaxes(gridcolor="#e5e7eb")
+            fig_risk.update_xaxes(showgrid=False, tickfont=dict(color="#111827"))
+            fig_risk.update_yaxes(gridcolor="#e5e7eb", tickfont=dict(color="#111827"))
             st.plotly_chart(fig_risk, use_container_width=True)
 
             total_risk_base = safe_pln + stocks_pln + crypto_pln
@@ -847,6 +843,7 @@ Przykłady:
                     title="Podział portfela według waluty ekspozycji (PLN)",
                     color="Currency",
                     color_discrete_sequence=["#3b82f6", "#22c55e", "#f97316", "#6366f1"],
+                    template="plotly_white",
                 )
                 fig_curr.update_layout(
                     xaxis_title="Waluta",
@@ -854,11 +851,13 @@ Przykłady:
                     paper_bgcolor="white",
                     plot_bgcolor="white",
                     font_color="#111827",
+                    title_font=dict(color="#111827", size=14),
                     legend_title_font_color="#111827",
                     legend_font_color="#111827",
+                    legend=dict(itemclick=False, itemdoubleclick=False),
                 )
-                fig_curr.update_xaxes(showgrid=False)
-                fig_curr.update_yaxes(gridcolor="#e5e7eb")
+                fig_curr.update_xaxes(showgrid=False, tickfont=dict(color="#111827"))
+                fig_curr.update_yaxes(gridcolor="#e5e7eb", tickfont=dict(color="#111827"))
                 st.plotly_chart(fig_curr, use_container_width=True)
         else:
             st.info("Brak danych do wyświetlenia struktury portfela.")
@@ -1311,6 +1310,7 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                     color="Scenario",
                     title="Prognozowany kapitał do wieku emerytalnego (realnie, w dzisiejszych PLN)",
                     color_discrete_sequence=["#3b82f6", "#22c55e", "#f97316"],
+                    template="plotly_white",
                 )
                 if required_capital > 0:
                     fig_proj.add_hline(
@@ -1319,17 +1319,28 @@ Realna stopa zwrotu oznacza wynik **po uwzględnieniu inflacji**.
                         annotation_text="Wymagany kapitał",
                         annotation_position="top left",
                     )
+
+                # Ustaw zakres osi Y tak, żeby nic nie wychodziło poza wykres
+                max_val = proj_df["Value_PLN"].max()
+                if required_capital > 0:
+                    max_val = max(max_val, required_capital)
+                if max_val <= 0:
+                    max_val = 1.0
+                fig_proj.update_yaxes(range=[0, max_val * 1.1])
+
                 fig_proj.update_layout(
                     xaxis_title="Wiek",
                     yaxis_title="Kapitał (PLN)",
                     paper_bgcolor="white",
                     plot_bgcolor="white",
                     font_color="#111827",
+                    title_font=dict(color="#111827", size=14),
                     legend_title_font_color="#111827",
                     legend_font_color="#111827",
+                    legend=dict(itemclick=False, itemdoubleclick=False),
                 )
-                fig_proj.update_xaxes(showgrid=False)
-                fig_proj.update_yaxes(gridcolor="#e5e7eb")
+                fig_proj.update_xaxes(showgrid=False, tickfont=dict(color="#111827"))
+                fig_proj.update_yaxes(gridcolor="#e5e7eb", tickfont=dict(color="#111827"))
                 st.plotly_chart(fig_proj, use_container_width=True)
 
                 if final_base is not None and required_capital > 0:

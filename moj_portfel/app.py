@@ -7,69 +7,148 @@ from datetime import datetime
 import plotly.express as px
 
 # -----------------------------
-# USTAWIENIA
+# SETTINGS
 # -----------------------------
 APP_TITLE = "Portfolio Tracker"
-PASSWORD = "mojehaslo"  # najlepiej przenieść do secrets (patrz niżej)
+PASSWORD = "mojehaslo"  # najlepiej przenieść do st.secrets na Streamlit Cloud
+
 
 # -----------------------------
-# CSS (lekko mobilne)
+# STYLING (FORCE LIGHT + MOBILE FRIENDLY)
 # -----------------------------
 def inject_css():
     st.markdown(
         """
         <style>
-        :root{
-          --bg:#f5f7fb; --card:#ffffff; --border:#e6e9f2;
-          --text:#0f172a; --muted:#64748b;
-          --primary:#2563eb; --good:#16a34a; --bad:#dc2626;
+        /* ===== FORCE LIGHT MODE ===== */
+        html, body, [data-testid="stAppViewContainer"] {
+            background-color: #f6f7fb !important;
+            color: #0f172a !important;
         }
 
-        [data-testid="stAppViewContainer"] { background: var(--bg); }
-        [data-testid="stSidebar"] { background: #fff; border-right: 1px solid var(--border); }
+        /* App container spacing */
+        .block-container {
+            max-width: 980px;
+            padding-top: 1rem;
+            padding-bottom: 2rem;
+        }
 
-        /* zwężenie contentu na desktop, a na mobile i tak się układa */
-        .block-container { max-width: 980px; padding-top: 1rem; }
+        /* ===== SIDEBAR ===== */
+        [data-testid="stSidebar"] {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e5e7eb;
+        }
+        [data-testid="stSidebar"] * {
+            color: #0f172a !important;
+        }
 
+        /* ===== HEADERS & TEXT ===== */
+        h1, h2, h3, h4, h5, h6, p, span, label, small {
+            color: #0f172a !important;
+        }
+        .stCaption, [data-testid="stCaptionContainer"] {
+            color: #475569 !important;
+        }
+
+        /* ===== HERO CARD ===== */
         .hero {
-          background: var(--card);
-          border: 1px solid var(--border);
-          border-radius: 16px;
-          padding: 14px 16px;
-          box-shadow: 0 8px 22px rgba(15,23,42,0.06);
-          margin-bottom: 12px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(15,23,42,0.06);
+            margin-bottom: 16px;
         }
-        .hero h1 { margin: 0; font-size: 1.35rem; }
-        .hero p  { margin: 4px 0 0 0; color: var(--muted); font-size: 0.95rem; }
-
-        /* przyciski */
-        button { border-radius: 999px !important; }
-
-        /* metric cards */
-        div[data-testid="metric-container"]{
-          background: var(--card) !important;
-          border: 1px solid var(--border) !important;
-          border-radius: 16px !important;
-          padding: 14px 12px !important;
-          box-shadow: 0 8px 22px rgba(15,23,42,0.05) !important;
+        .hero-title {
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+        }
+        .hero-subtitle {
+            margin: 6px 0 0 0;
+            font-size: 0.96rem;
+            color: #475569 !important;
         }
 
-        /* małe “badge” */
-        .badge { display:inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.82rem; }
-        .up { background: rgba(22,163,74,0.10); color: var(--good); }
-        .down { background: rgba(220,38,38,0.10); color: var(--bad); }
-        .flat { background: rgba(100,116,139,0.12); color: var(--muted); }
+        /* ===== METRICS ===== */
+        div[data-testid="metric-container"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 16px !important;
+            padding: 14px !important;
+            box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+        }
+        div[data-testid="stMetricLabel"] {
+            color: #475569 !important;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        div[data-testid="stMetricValue"] {
+            color: #0f172a !important;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
 
-        /* ukryj menu */
-        #MainMenu {visibility:hidden;}
-        footer {visibility:hidden;}
+        /* ===== INPUTS ===== */
+        input, textarea, select {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+        }
+
+        /* ===== MULTISELECT TAGS (BaseWeb) ===== */
+        div[data-baseweb="tag"] {
+            background-color: #e0e7ff !important;
+            color: #1e3a8a !important;
+            border-radius: 999px !important;
+            font-weight: 600 !important;
+        }
+        div[data-baseweb="tag"] span {
+            color: #1e3a8a !important;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-radius: 999px !important;
+            border: none !important;
+            font-weight: 700 !important;
+        }
+        button:hover {
+            background-color: #1d4ed8 !important;
+        }
+
+        /* ===== DATAFRAME ===== */
+        [data-testid="stDataFrame"] {
+            background-color: #ffffff !important;
+            border-radius: 12px !important;
+            border: 1px solid #e5e7eb !important;
+            overflow: hidden !important;
+        }
+
+        /* Plotly container */
+        [data-testid="stPlotlyChart"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 16px !important;
+            padding: 12px !important;
+            box-shadow: 0 8px 20px rgba(15,23,42,0.05) !important;
+        }
+
+        /* Hide Streamlit chrome */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
         </style>
         """,
         unsafe_allow_html=True,
     )
 
+
 # -----------------------------
-# PARSOWANIE POZYCJI
+# PARSE POSITIONS
 # -----------------------------
 def parse_positions(text: str) -> pd.DataFrame:
     """
@@ -83,13 +162,13 @@ def parse_positions(text: str) -> pd.DataFrame:
         line = line.strip()
         if not line:
             continue
+
         parts = [p.strip() for p in line.split(",")]
         if len(parts) < 2:
             continue
 
         ticker = parts[0].upper()
 
-        qty = None
         try:
             qty = float(parts[1].replace(",", "."))
         except ValueError:
@@ -114,7 +193,10 @@ def parse_positions(text: str) -> pd.DataFrame:
             {"Ticker": ticker, "Quantity": qty, "PurchasePrice": purchase_price, "Account": account}
         )
 
-    df = pd.DataFrame(rows) if rows else pd.DataFrame(columns=["Ticker","Quantity","PurchasePrice","Account"])
+    if not rows:
+        return pd.DataFrame(columns=["Ticker", "Quantity", "PurchasePrice", "Account", "Category"])
+
+    df = pd.DataFrame(rows)
 
     def categorize(row):
         if row["Account"] in ("IKE", "IKZE"):
@@ -123,18 +205,17 @@ def parse_positions(text: str) -> pd.DataFrame:
             return "CRYPTO"
         return "STOCK"
 
-    if not df.empty:
-        df["Category"] = df.apply(categorize, axis=1)
-
+    df["Category"] = df.apply(categorize, axis=1)
     return df
 
+
 # -----------------------------
-# DANE RYNKOWE
+# MARKET DATA
 # -----------------------------
 @st.cache_data(ttl=300)
 def get_ticker_data(ticker: str):
     """
-    Zwraca: price, name, trend_1m, trend_1w, currency
+    Returns: price, name, trend_1m, trend_1w, currency
     """
     try:
         t = yf.Ticker(ticker)
@@ -172,6 +253,7 @@ def get_ticker_data(ticker: str):
     except Exception:
         return None, None, None, None, None
 
+
 @st.cache_data(ttl=300)
 def fx_rate(symbol: str):
     try:
@@ -183,14 +265,10 @@ def fx_rate(symbol: str):
     except Exception:
         return None
 
-def trend_badge(t):
-    if t == "up":
-        return '<span class="badge up">↑</span>'
-    if t == "down":
-        return '<span class="badge down">↓</span>'
-    if t == "flat":
-        return '<span class="badge flat">→</span>'
-    return '<span class="badge flat">–</span>'
+
+def trend_symbol(x):
+    return "↑" if x == "up" else "↓" if x == "down" else "→" if x == "flat" else "–"
+
 
 # -----------------------------
 # APP
@@ -202,14 +280,14 @@ def main():
     st.markdown(
         f"""
         <div class="hero">
-          <h1>💰 {APP_TITLE}</h1>
-          <p>Akcje/ETF, krypto, IKE/IKZE. Live ceny z Yahoo Finance. Widok mobilny-friendly.</p>
+          <div class="hero-title">💰 {APP_TITLE}</div>
+          <div class="hero-subtitle">Akcje/ETF, krypto, IKE/IKZE. Live ceny z Yahoo Finance. Widok mobilny-friendly.</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # --- Sidebar: dostęp ---
+    # Sidebar: Access
     st.sidebar.header("🔒 Dostęp")
     pw = st.sidebar.text_input("Hasło", type="password")
     if pw != PASSWORD:
@@ -219,7 +297,8 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.header("🧾 Pozycje")
     st.sidebar.caption("Format: TICKER,ILOŚĆ[,CENA_ZAKUPU][,KONTO]")
-    st.sidebar.caption("KONTO: IKE / IKZE (opcjonalnie). Krypto najczęściej kończy się na -USD.")
+    st.sidebar.caption("KONTO: IKE / IKZE (opcjonalnie). Krypto zwykle kończy się na -USD.")
+    st.sidebar.caption("Przykład: VWCE.DE,2,100,IKE")
 
     default_positions = (
         "BTC-USD,0.02,35000\n"
@@ -249,16 +328,24 @@ def main():
     usd_pln = fx_rate("USDPLN=X")
     eur_pln = fx_rate("EURPLN=X")
 
-    # pobranie rynkowe
+    # Fetch market data
     prices, names, t1m, t1w, currs, missing = [], [], [], [], [], []
     with st.spinner("Pobieram ceny rynkowe..."):
         for _, row in df.iterrows():
             p, n, m, w, c = get_ticker_data(row["Ticker"])
             if p is None:
-                prices.append(np.nan); names.append(None); t1m.append(None); t1w.append(None); currs.append(None)
+                prices.append(np.nan)
+                names.append(None)
+                t1m.append(None)
+                t1w.append(None)
+                currs.append(None)
                 missing.append(row["Ticker"])
             else:
-                prices.append(p); names.append(n); t1m.append(m); t1w.append(w); currs.append(c)
+                prices.append(p)
+                names.append(n)
+                t1m.append(m)
+                t1w.append(w)
+                currs.append(c)
 
     df["Name"] = names
     df["Price"] = prices
@@ -266,6 +353,7 @@ def main():
     df["Trend1w"] = t1w
     df["Currency"] = currs
 
+    # Value in PLN
     def value_pln(row):
         if pd.isna(row["Price"]) or pd.isna(row["Quantity"]) or row["Currency"] is None:
             return np.nan
@@ -291,9 +379,13 @@ def main():
     df["Value_PLN"] = df.apply(value_pln, axis=1)
     df["PurchaseValue_PLN"] = df.apply(purchase_value_pln, axis=1)
     df["PL_Value_PLN"] = df["Value_PLN"] - df["PurchaseValue_PLN"]
-    df["PL_Percent"] = np.where(df["PurchaseValue_PLN"] > 0, df["PL_Value_PLN"] / df["PurchaseValue_PLN"] * 100, np.nan)
+    df["PL_Percent"] = np.where(
+        df["PurchaseValue_PLN"] > 0,
+        df["PL_Value_PLN"] / df["PurchaseValue_PLN"] * 100,
+        np.nan
+    )
 
-    # USD value only as convenience
+    # Convenience USD value
     if usd_pln is not None:
         df["Value_USD"] = df["Value_PLN"] / usd_pln
     else:
@@ -301,32 +393,24 @@ def main():
 
     valid = df.dropna(subset=["Price"])
 
-    # --- KPI (mobilne: i tak się zwiną w dół) ---
-    c1, c2, c3, c4 = st.columns(4)
     total_pln = float(valid["Value_PLN"].sum(skipna=True)) if not valid.empty else 0.0
     total_pl = float(valid["PL_Value_PLN"].sum(skipna=True)) if not valid.empty else np.nan
 
+    # KPI
+    c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Wartość portfela (PLN)", f"{total_pln:,.2f}")
     with c2:
-        if usd_pln is not None:
-            st.metric("USD/PLN", f"{usd_pln:,.4f}")
-        else:
-            st.metric("USD/PLN", "brak")
+        st.metric("USD/PLN", f"{usd_pln:,.4f}" if usd_pln is not None else "brak")
     with c3:
-        if eur_pln is not None:
-            st.metric("EUR/PLN", f"{eur_pln:,.4f}")
-        else:
-            st.metric("EUR/PLN", "brak")
+        st.metric("EUR/PLN", f"{eur_pln:,.4f}" if eur_pln is not None else "brak")
     with c4:
-        if pd.notna(total_pl):
-            st.metric("P/L (PLN)", f"{total_pl:,.2f}")
-        else:
-            st.metric("P/L (PLN)", "—")
+        st.metric("P/L (PLN)", f"{total_pl:,.2f}" if pd.notna(total_pl) else "—")
 
     st.caption("Aktualizacja: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-    # --- Filtry (ważne na mobile) ---
+    # Filters
+    st.markdown("### Filtry")
     f1, f2 = st.columns([1, 1])
     with f1:
         account_filter = st.multiselect(
@@ -345,14 +429,10 @@ def main():
     view = view[view["Account"].isin(account_filter)]
     view = view[view["Category"].isin(cat_filter)]
 
-    # --- Tabela: responsywna (streamlit dataframe) ---
-    # Dodajemy proste kolumny trendu jako badge (HTML w markdown obok tabeli byłoby cięższe),
-    # więc tu trzymamy symbole tekstowe.
-    def trend_symbol(x):
-        return "↑" if x == "up" else "↓" if x == "down" else "→" if x == "flat" else "–"
-
     view["T1W"] = view["Trend1w"].apply(trend_symbol)
     view["T1M"] = view["Trend1m"].apply(trend_symbol)
+
+    st.markdown("### 📊 Pozycje")
 
     display = view[[
         "Name", "Ticker", "Account", "Category", "Currency",
@@ -361,34 +441,27 @@ def main():
         "T1W", "T1M"
     ]].copy()
 
-    # formatowanie liczb
-    for col in ["Quantity", "PurchasePrice", "Price", "Value_PLN", "PL_Value_PLN", "PL_Percent"]:
-        display[col] = pd.to_numeric(display[col], errors="coerce")
-
-    st.subheader("📊 Pozycje")
     st.dataframe(
         display,
         use_container_width=True,
         hide_index=True,
         column_config={
+            "Quantity": st.column_config.NumberColumn("Qty", format="%.4f"),
+            "PurchasePrice": st.column_config.NumberColumn("Buy Price", format="%.4f"),
+            "Price": st.column_config.NumberColumn("Price", format="%.4f"),
             "Value_PLN": st.column_config.NumberColumn("Value (PLN)", format="%.2f"),
             "PL_Value_PLN": st.column_config.NumberColumn("P/L (PLN)", format="%.2f"),
             "PL_Percent": st.column_config.NumberColumn("P/L (%)", format="%.2f"),
-            "PurchasePrice": st.column_config.NumberColumn("Buy Price", format="%.4f"),
-            "Price": st.column_config.NumberColumn("Price", format="%.4f"),
-            "Quantity": st.column_config.NumberColumn("Qty", format="%.4f"),
         },
     )
 
-    # Export CSV
     csv = display.to_csv(index=False).encode("utf-8")
     st.download_button("⬇️ Pobierz CSV", csv, file_name="portfolio.csv", mime="text/csv")
 
     if missing:
         st.warning("Brak danych cenowych dla: " + ", ".join(sorted(set(missing))))
 
-    # --- Mini-wykres: udział kategorii (PLN) ---
-    st.subheader("📈 Struktura portfela")
+    st.markdown("### 📈 Struktura portfela")
     if not valid.empty and total_pln > 0:
         grp = (
             valid.groupby("Category", as_index=False)["Value_PLN"]
@@ -396,9 +469,17 @@ def main():
             .sort_values("Value_PLN", ascending=False)
         )
         fig = px.pie(grp, names="Category", values="Value_PLN", title="Udział kategorii (PLN)", template="plotly_white")
+        fig.update_layout(
+            paper_bgcolor="white",
+            plot_bgcolor="white",
+            font_color="#0f172a",
+            title_font=dict(color="#0f172a"),
+            legend_font_color="#0f172a",
+        )
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Brak danych do wykresu struktury.")
+
 
 if __name__ == "__main__":
     main()

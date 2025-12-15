@@ -11,7 +11,7 @@ import streamlit.components.v1 as components
 # SETTINGS
 # -----------------------------
 APP_TITLE = "Portfolio Tracker"
-PASSWORD = st.secrets["PASSWORD"]
+PASSWORD = "mojehaslo"  # docelowo: st.secrets["PASSWORD"]
 
 # -----------------------------
 # CSS (app-level, light)
@@ -462,4 +462,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
